@@ -32,8 +32,6 @@
     <script>
 		let counter = new Counter();
 
-        console.log(String(Math.random()).substr(2, 12))
-
 		counter.init('c37fb99d-16b6-4948-af5f-25e89921b1b9', String(Math.random()).substr(2, 12), 'send test');
 		counter.setAdditionalParams({
 			env: 'production',
@@ -50,6 +48,17 @@
 
 			counter.send('load', Date.now() - timeStart);
 		}, Math.random() * 1000 + 500);
+
+		setTimeout(function() {
+			counter.send('interactive', performance.timing.domInteractive - performance.timing.domLoading);
+		}, Math.random() * 1000 + 500);
+
+		new PerformanceObserver((entryList) => {
+			for (const entry of entryList.getEntriesByName('first-contentful-paint')) {
+				counter.send('fcp', entry.startTime);
+			}
+		}).observe({type: 'paint', buffered: true});
+
 	</script>
 
     <div class="square"></div>

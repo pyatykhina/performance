@@ -22,10 +22,10 @@ function prepareData(result) {
 // показать значение метрики за несколько день
 function showMetricByPeriod(data, page, name, dateStart, dateFinish) {
 	let sampleData = data
-					.filter(item => item.page == page && item.name == name && item.date == date)
+					.filter(item => item.page == page && item.name == name && item.date >= dateStart && item.date <= dateFinish)
 					.map(item => item.value);
 
-	console.log(`${dateFinish} - ${dateStart} ${name}: ` +
+	console.log(`${dateStart} - ${dateFinish} ${name}: ` +
 		`p25=${quantile(sampleData, 0.25)} p50=${quantile(sampleData, 0.5)} ` +
 		`p75=${quantile(sampleData, 0.75)} p90=${quantile(sampleData, 0.95)} ` +
 		`hits=${sampleData.length}`);
@@ -37,7 +37,7 @@ function showSession(data, requestId) {
 					.filter(item => item.requestId === requestId)
 					.map(item => item.value);
 
-	console.log(`${requestId}: ` + sampleData);
+	console.log(`session ${requestId}: ` + sampleData);
 }
 
 // сравнить метрику в разных срезах
@@ -65,8 +65,10 @@ fetch('https://shri.yandex/hw/stat/data?counterId=c37fb99d-16b6-4948-af5f-25e899
 		calcMetricByDate(data, 'send test', 'connect', '2021-07-11');
 		calcMetricByDate(data, 'send test', 'ttfb', '2021-07-11');
 		calcMetricByDate(data, 'send test', 'load', '2021-07-11');
+		calcMetricByDate(data, 'send test', 'interactive', '2021-07-12');
+		calcMetricByDate(data, 'send test', 'fcp', '2021-07-12');
 
-		showMetricByPeriod(data, 'send test', 'name', '2021-07-03', '2021-07-11');
+		showMetricByPeriod(data, 'send test', 'connect', '2021-07-03', '2021-07-12');
 		showSession(data, data[0].requestId);
 		compareMetric(data, 'send test', 'connect', '2021-07-11');
 	});
